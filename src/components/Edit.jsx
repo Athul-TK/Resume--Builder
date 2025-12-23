@@ -8,6 +8,8 @@ import Button from '@mui/material/Button';
 
 import TextField from '@mui/material/TextField';
 import { Height, Maximize } from '@mui/icons-material';
+import { getAResumeAPI } from '../services/allApi';
+
 
 const style = {
   position: 'absolute',
@@ -19,15 +21,34 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
-  overflow: 'scroll',
-  MaxHeight: '90vh'
+  Overflow: 'auto',
+  // MaxHeight: '90vh'
+  Height: '100vh'
+  
 };
 
-function Edit() {
+function Edit({editId}) {
 
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {setOpen(true)
+  grtEditResumeData();
+  };
   const handleClose = () => setOpen(false);
+  console.log(editId);
+
+  //get data from json server using editId
+
+
+  const grtEditResumeData=async()=>{
+    try{
+      const result=await getAResumeAPI(editId);
+      console.log(result);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
+  
   return (
     <>
       <button onClick={handleOpen} className='btn btn-primary'><FaRegEdit /></button>

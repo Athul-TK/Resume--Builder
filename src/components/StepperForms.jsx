@@ -6,40 +6,18 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import { resume } from 'react-dom/server';
+import { addResumeAPI } from '../services/allApi';
 const steps = ['Basic Information', 'Contact Details', 'Education Details', 'work Experience', 'Skills and certification', 'Review and Submit'];
 
-function StepperForms() {
+function StepperForms({ resumeData, setResumeData, setISResumeAdded, seteditId }) {
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  
-  const [resumeData,setResumeData]=useState({
-    professionalData:{
-      name:"",
-      jobTitle:"",
-      location:"",
-      email:"",
-      phone:"",
-      github:"",
-      linkedin:"",
-      portfolio:""
-    },
-    educationData:{
-      course:"",
-      collage:"",
-      university:"",
-      year:""
-  },
-  experience:{
-    jobRole:"",
-    company:"",
-    joblocation:"",
-    duration:""
-  },
-  skills:[],
-  summary:""
-});
+  const [inputSkill, setInputSkill] = useState("");
+  const skillSuggestion = ["HTML", "CSS", "JavaScript", "React", "Node.js", "Express.js",]
 
-console.log(resumeData);
+
 
 
 
@@ -86,7 +64,53 @@ console.log(resumeData);
     setActiveStep(0);
   };
 
+  //add skill function
+  const addskill = (inputSkill) => {
+    console.log(inputSkill);
+    if (!inputSkill) {
+      alert("Please Add a skill")
+    }
+    else {
+      if (resumeData.skills.includes(inputSkill)) {
+        alert("Skill already added")
+      }
+      else {
+        setResumeData({ ...resumeData, skills: [...resumeData.skills, inputSkill] })
+      }
+    }
 
+  }
+
+
+  //handle delete skill
+  const handelselSkill = (delSkill) => {
+    console.log(delSkill);
+    setResumeData({ ...resumeData, skills: resumeData.skills.filter((iteam) => iteam != delSkill) })
+
+  }
+  //handle submit
+  const handleSubmit = async () => {
+    const { name, jobTitle, location } = resumeData.professionalData
+    if (!name || !jobTitle || !location) {
+      alert("Please fill all the required fields")
+    } else {
+      try {
+        const result = await addResumeAPI(resumeData)
+        console.log(result);
+        if (result.status == 201) {
+          seteditId(result.data.id)
+          setISResumeAdded(true)
+          alert("Resume added successfully")
+        } else {
+          alert("Failed to add resume")
+        }
+      } catch (err) {
+        console.log(err);
+
+
+      }
+    }
+  }
 
   // 'Basic Information', 'Contact Details', 'Education Details','work Experience','Skills and certification','Review and Submit'
 
@@ -98,25 +122,25 @@ console.log(resumeData);
           <div>
             <h1>Person Details</h1>
             <div className='d-flex row p-3 gap-2'>
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,name:e.target.value}}))} label="Full Name" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,jobTitle:e.target.value}}))} label="Job Tittle" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,location:e.target.value}}))} label="Location" variant="outlined" />
-               </div>
-            
-           </div>
+              <TextField id="outlined-basic" value={resumeData.professionalData.name} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, name: e.target.value } }))} label="Full Name" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.jobTitle} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, jobTitle: e.target.value } }))} label="Job Tittle" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.location} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, location: e.target.value } }))} label="Location" variant="outlined" />
+            </div>
+
+          </div>
         )
       case 1:
         return (
           <div>
-            
+
             <h1>Contact Details</h1>
             <div className='d-flex row p-3 gap-2'>
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,email:e.target.value}}))} label="Email" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,phone:e.target.value}}))}label="Phone Numner" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,github:e.target.value}}))}label="Git Hub Profile Link" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,linkedin:e.target.value}}))}label="Linkedin Profile Link" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,professionalData:{...resumeData.professionalData,portfolio:e.target.value}}))}label="Portfolio Profile Link" variant="outlined" />
-               </div>
+              <TextField id="outlined-basic" value={resumeData.professionalData.email} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, email: e.target.value } }))} label="Email" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.phone} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, phone: e.target.value } }))} label="Phone Numner" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.github} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, github: e.target.value } }))} label="Git Hub Profile Link" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.linkedin} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, linkedin: e.target.value } }))} label="Linkedin Profile Link" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.professionalData.portfolio} onChange={(e) => (setResumeData({ ...resumeData, professionalData: { ...resumeData.professionalData, portfolio: e.target.value } }))} label="Portfolio Profile Link" variant="outlined" />
+            </div>
           </div>
         )
       case 2:
@@ -124,11 +148,11 @@ console.log(resumeData);
           <div>
             <h1>Education Details</h1>
             <div className='d-flex row p-3 gap-2'>
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,educationData:{...resumeData.educationData,course:e.target.value}}))}  label="Coourse Name" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,educationData:{...resumeData.educationData,collage:e.target.value}}))} label="Collage Name" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,educationData:{...resumeData.educationData,university:e.target.value}}))} label="University Name" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,educationData:{...resumeData.educationData,year:e.target.value}}))} label="Year of Pass Out" variant="outlined" />
-               </div>
+              <TextField id="outlined-basic" value={resumeData.educationData.course} onChange={(e) => (setResumeData({ ...resumeData, educationData: { ...resumeData.educationData, course: e.target.value } }))} label="Coourse Name" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.educationData.collage} onChange={(e) => (setResumeData({ ...resumeData, educationData: { ...resumeData.educationData, collage: e.target.value } }))} label="Collage Name" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.educationData.university} onChange={(e) => (setResumeData({ ...resumeData, educationData: { ...resumeData.educationData, university: e.target.value } }))} label="University Name" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.educationData.year} onChange={(e) => (setResumeData({ ...resumeData, educationData: { ...resumeData.educationData, year: e.target.value } }))} label="Year of Pass Out" variant="outlined" />
+            </div>
           </div>
         )
       case 3:
@@ -136,11 +160,11 @@ console.log(resumeData);
           <div>
             <h1>Proffesional Details</h1>
             <div className='d-flex row p-3 gap-2'>
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,experience:{...resumeData.experience,jobRole:e.target.value}}))} label="Job Or Internship" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,experience:{...resumeData.experience,company:e.target.value}}))} label="commpany Name" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,experience:{...resumeData.experience,joblocation:e.target.value}}))} label="Location" variant="outlined" />
-               <TextField id="outlined-basic" onChange={(e)=>(setResumeData({...resumeData,experience:{...resumeData.experience,duration:e.target.value}}))} label="Duration" variant="outlined" />
-               </div>
+              <TextField id="outlined-basic" value={resumeData.experience.jobRole} onChange={(e) => (setResumeData({ ...resumeData, experience: { ...resumeData.experience, jobRole: e.target.value } }))} label="Job Or Internship" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.experience.company} onChange={(e) => (setResumeData({ ...resumeData, experience: { ...resumeData.experience, company: e.target.value } }))} label="commpany Name" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.experience.joblocation} onChange={(e) => (setResumeData({ ...resumeData, experience: { ...resumeData.experience, joblocation: e.target.value } }))} label="Location" variant="outlined" />
+              <TextField id="outlined-basic" value={resumeData.experience.duration} onChange={(e) => (setResumeData({ ...resumeData, experience: { ...resumeData.experience, duration: e.target.value } }))} label="Duration" variant="outlined" />
+            </div>
           </div>
         )
       case 4:
@@ -148,33 +172,37 @@ console.log(resumeData);
           <div>
             <h1>Skills</h1>
             <div className='d-flex align-iteams-cener justfy-content-between p-3 gap-3'>
-               <TextField sx={{width:"600px"}} id="outlined-basic" label="Enter Skills" variant="outlined" />
-               <Button variant='outlined'>ADD</Button>
-               </div>
-               <div>
-                <h3>Suggestions :</h3>
-                <div className='d-flex gap-4 mt-3 flex-wrap'>
-                  <Button variant='outlined'>HTML</Button>
-                </div>
-               </div>
-               <div>
-                <h3>Added Skills</h3>
-                <div className='d-flex flex-wrap gap-4 mt-3'>
-                  <span className='btn btn-primary me-3 mb-2'>HTML <button className='btn text-light'>X</button>
-                  </span>
+              <TextField value={inputSkill} onChange={(e) => setInputSkill(e.target.value)} sx={{ width: "600px" }} id="outlined-basic" label="Enter Skills" variant="outlined" />
+              <Button onClick={() => addskill(inputSkill)} variant='outlined'>ADD</Button>
+            </div>
+            <div>
+              <h3>Suggestions :</h3>
+              <div className='d-flex gap-4 mt-3 flex-wrap'>
+                {skillSuggestion.map((skill) => <Button onClick={() => addskill(skill)} variant='outlined'>{skill}</Button>)}
 
-                </div>
-               </div>
+              </div>
+            </div>
+            <div>
+              <h3 className='mt-3'>Added Skills</h3>
+              <div className='d-flex flex-wrap gap-4 mt-3'>
+                {resumeData.skills.map((iteam) => (
+                  <span className='btn btn-primary me-3 mb-2'>{iteam} <button onClick={() => handelselSkill(iteam)} className='btn text-light'>X</button></span>
+                ))}
+
+
+
+              </div>
+            </div>
           </div>
         )
       case 5:
         return (
           <div>
-            <h1>Proffesional Details</h1>
+            <h1>Summary</h1>
             <div className='d-flex row p-3 gap-2'>
-               <TextField multiline rows={5} id="outlined-basic" label="Wirte a short summary of your self" variant="outlined" />
-               
-               </div>
+              <TextField value={resumeData.summary.summary} multiline rows={5} id="outlined-basic" onChange={(e) => (setResumeData({ ...resumeData, summary: e.target.value }))} label="Wirte a short summary of your self" variant="outlined" />
+
+            </div>
           </div>
         )
     }
@@ -211,6 +239,7 @@ console.log(resumeData);
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
               <Box sx={{ flex: '1 1 auto' }} />
               <Button onClick={handleReset}>Reset</Button>
+              <Button onClick={handleSubmit}>Submit</Button>
             </Box>
           </React.Fragment>
         ) : (
