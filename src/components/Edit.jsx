@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use, useState } from 'react'
 import { FaRegEdit } from "react-icons/fa";
 import Box from '@mui/material/Box';
 
@@ -21,17 +21,19 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
-  Overflow: 'auto',
-  // MaxHeight: '90vh'
-  Height: '100vh'
-  
+  overflowY: 'scroll',
+  maxHeight: '90vh'
+
 };
 
-function Edit({editId}) {
+function Edit({ editId }) {
+  //to save getEditResumeData result
+  const [editDta, seteditData]=useState({});
 
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {setOpen(true)
-  grtEditResumeData();
+  const handleOpen = () => {
+    setOpen(true)
+    getEditResumeData();
   };
   const handleClose = () => setOpen(false);
   console.log(editId);
@@ -39,16 +41,20 @@ function Edit({editId}) {
   //get data from json server using editId
 
 
-  const grtEditResumeData=async()=>{
-    try{
-      const result=await getAResumeAPI(editId);
+  const getEditResumeData = async () => {
+    try {
+      const result = await getAResumeAPI(editId);
       console.log(result);
+      seteditData(result.data);
     }
-    catch(err){
+    catch (err) {
       console.log(err);
     }
   }
+
+  // console.log(seteditData);
   
+
   return (
     <>
       <button onClick={handleOpen} className='btn btn-primary'><FaRegEdit /></button>
@@ -66,9 +72,9 @@ function Edit({editId}) {
             <div>
               <h1>Person Details</h1>
               <div className='d-flex row p-3 gap-2'>
-                <TextField id="outlined-basic" label="Full Name" variant="outlined" />
-                <TextField id="outlined-basic" label="Job Tittle" variant="outlined" />
-                <TextField id="outlined-basic" label="Location" variant="outlined" />
+                <TextField value={editDta?.professionalData?.name} id="outlined-basic" label="Full Name" variant="outlined" />
+                <TextField value={editDta?.professionalData?.jobTitle}id="outlined-basic" label="Job Tittle" variant="outlined" />
+                <TextField value={editDta?.professionalData?.location}id="outlined-basic" label="Location" variant="outlined" />
               </div>
 
             </div>
@@ -76,29 +82,29 @@ function Edit({editId}) {
 
               <h1>Contact Details</h1>
               <div className='d-flex row p-3 gap-2'>
-                <TextField id="outlined-basic" label="Email" variant="outlined" />
-                <TextField id="outlined-basic" label="Phone Numner" variant="outlined" />
-                <TextField id="outlined-basic" label="Git Hub Profile Link" variant="outlined" />
-                <TextField id="outlined-basic" label="Linkedin Profile Link" variant="outlined" />
-                <TextField id="outlined-basic" label="Portfolio Profile Link" variant="outlined" />
+                <TextField value={editDta?.professionalData?.email} id="outlined-basic" label="Email" variant="outlined" />
+                <TextField value={editDta?.professionalData?.phone}id="outlined-basic" label="Phone Numner" variant="outlined" />
+                <TextField value={editDta?.professionalData?.github}id="outlined-basic" label="Git Hub Profile Link" variant="outlined" />
+                <TextField value={editDta?.professionalData?.linkedin}id="outlined-basic" label="Linkedin Profile Link" variant="outlined" />
+                <TextField value={editDta?.professionalData?.portfolio}id="outlined-basic" label="Portfolio Profile Link" variant="outlined" />
               </div>
             </div>
             <div>
               <h1>Education Details</h1>
               <div className='d-flex row p-3 gap-2'>
-                <TextField id="outlined-basic" label="Coourse Name" variant="outlined" />
-                <TextField id="outlined-basic" label="Collage Name" variant="outlined" />
-                <TextField id="outlined-basic" label="University Name" variant="outlined" />
-                <TextField id="outlined-basic" label="Year of Pass Out" variant="outlined" />
+                <TextField value={editDta?.educationData?.course}  id="outlined-basic" label="Coourse Name" variant="outlined" />
+                <TextField value={editDta?.educationData?.collage}id="outlined-basic" label="Collage Name" variant="outlined" />
+                <TextField value={editDta?.educationData?.university}id="outlined-basic" label="University Name" variant="outlined" />
+                <TextField value={editDta?.educationData?.year}id="outlined-basic" label="Year of Pass Out" variant="outlined" />
               </div>
             </div>
             <div>
               <h1>Proffesional Details</h1>
               <div className='d-flex row p-3 gap-2'>
-                <TextField id="outlined-basic" label="Job Or Internship" variant="outlined" />
-                <TextField id="outlined-basic" label="commpany Name" variant="outlined" />
-                <TextField id="outlined-basic" label="Location" variant="outlined" />
-                <TextField id="outlined-basic" label="Duration" variant="outlined" />
+                <TextField value={editDta?.experience?.jobRole} id="outlined-basic" label="Job Or Internship" variant="outlined" />
+                <TextField value={editDta?.experience?.company}id="outlined-basic" label="commpany Name" variant="outlined" />
+                <TextField value={editDta?.experience?.joblocation}id="outlined-basic" label="Location" variant="outlined" />
+                <TextField value={editDta?.experience?.duration}id="outlined-basic" label="Duration" variant="outlined" />
               </div>
             </div>
             <div>
@@ -125,7 +131,7 @@ function Edit({editId}) {
             <div>
               <h1>Proffesional Details</h1>
               <div className='d-flex row p-3 gap-2'>
-                <TextField multiline rows={5} id="outlined-basic" label="Wirte a short summary of your self" variant="outlined" />
+                <TextField value={editDta.summary} multiline rows={5} id="outlined-basic" label="Wirte a short summary of your self" variant="outlined" />
 
               </div>
             </div>
