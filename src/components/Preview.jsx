@@ -55,9 +55,9 @@ function Preview({ resumeData, IsResumeAdded, editId, setResumeData }) {
           <h4 className='text-primary'>{resumeData.professionalData.jobTitle}</h4>
           <p>{resumeData.professionalData.location} | {resumeData.professionalData.email} | {resumeData.professionalData.phone}</p>
           <div>
-            <Link>GitHub</Link> |
-            <Link>LinkedIn</Link> |
-            <Link>Portfolio</Link>
+            <Link to={resumeData?.professionalData.github   } target='_blank' >GitHub</Link> |
+            <Link to={resumeData?.professionalData.linkedin } target='_blank' >LinkedIn</Link> |
+            <Link to={resumeData?.professionalData.portfolio} target='_blank' >Portfolio</Link>
           </div>
           <Divider sx={{ fontSize: "20px", marginTop: "10px" }}>Summary</Divider>
           <p>{resumeData.summary}</p>
@@ -69,8 +69,8 @@ function Preview({ resumeData, IsResumeAdded, editId, setResumeData }) {
           <h5>{resumeData.experience.jobRole}</h5>
           <p>{resumeData.experience.company} | {resumeData.experience.joblocation} | {resumeData.experience.duration}</p>
           <Divider sx={{ fontSize: "20px", marginTop: "10px" }}>Skills</Divider>
-          <div className='d-flex flex-wrap gap-3'>
-            <button className='btn btn-primary'>HTML</button>
+          <div className='d-flex flex-wrap justify-content-center mt-3 gap-3'>
+            {resumeData.skills.map(iteam =>(<button className='btn btn-center btn-primary '>{iteam}</button>))}
           </div>
         </div>
       </div>
