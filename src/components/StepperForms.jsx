@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { resume } from 'react-dom/server';
 import { addResumeAPI } from '../services/allApi';
+import Swal from 'sweetalert2'
 const steps = ['Basic Information', 'Contact Details', 'Education Details', 'work Experience', 'Skills and certification', 'Review and Submit'];
 
 function StepperForms({ resumeData, setResumeData, setISResumeAdded, seteditId }) {
@@ -69,6 +70,7 @@ function StepperForms({ resumeData, setResumeData, setISResumeAdded, seteditId }
     console.log(inputSkill);
     if (!inputSkill) {
       alert("Please Add a skill")
+      
     }
     else {
       if (resumeData.skills.includes(inputSkill)) {
@@ -100,9 +102,19 @@ function StepperForms({ resumeData, setResumeData, setISResumeAdded, seteditId }
         if (result.status == 201) {
           seteditId(result.data.id)
           setISResumeAdded(true)
-          alert("Resume added successfully")
+          // alert("Resume added successfully")
+          Swal.fire({
+            title: "Resume added successfully",
+            icon: "success",
+
+          });
         } else {
-          alert("Failed to add resume")
+          // alert("Failed to add resume")
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to add resume!"
+          });
         }
       } catch (err) {
         console.log(err);

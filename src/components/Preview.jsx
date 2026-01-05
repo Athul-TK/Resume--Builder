@@ -5,12 +5,33 @@ import { FaFileDownload } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
 import { Link } from 'react-router-dom'
 import Edit from './Edit'
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 
 
 
-function Preview({ resumeData, IsResumeAdded,editId }) {
+function Preview({ resumeData, IsResumeAdded, editId, setResumeData }) {
   console.log(resumeData);
+
+
+  // donload resume pdf
+
+  const resumeDownloadPDF = async () => {
+    const input = document.getElementById('DWLResult') // to get id
+    const canvas = await html2canvas(input, { scale: 2 }) // convert the selected html to canvas (screenshot)
+    const imgData = canvas.toDataURL("img/png") // to convert into image url
+
+    //image url to pdf
+    const pdf = new jsPDF("p", "mm", "a4")
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfHeigth = (canvas.height * pdfWidth) / canvas.width
+    pdf.addImage(imgData, "png", 0, 0, pdfWidth, pdfHeigth)
+    pdf.save("Resume.pdf")
+
+
+
+  }
 
 
   return (
@@ -20,8 +41,8 @@ function Preview({ resumeData, IsResumeAdded,editId }) {
 
           {IsResumeAdded &&
             <>
-              <Edit editId={editId} />
-              <button className='btn btn-primary'><FaFileDownload /></button>
+              <Edit editId={editId} setResumeData={setResumeData} />
+              <button onClick={resumeDownloadPDF} className='btn btn-primary'><FaFileDownload /></button>
             </>
           }
 
@@ -29,7 +50,7 @@ function Preview({ resumeData, IsResumeAdded,editId }) {
           <Link to={"/"}><button className='btn btn-primary'>Back</button></Link>
 
         </div>
-        <div className='p-3 text-center shadow'>
+        <div id='DWLResult' className='p-3 text-center shadow'>
           <h2>{resumeData.professionalData.name}</h2>
           <h4 className='text-primary'>{resumeData.professionalData.jobTitle}</h4>
           <p>{resumeData.professionalData.location} | {resumeData.professionalData.email} | {resumeData.professionalData.phone}</p>

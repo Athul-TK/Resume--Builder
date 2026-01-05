@@ -44,7 +44,7 @@ function Forms() {
 
           </div>
           <div className="col-8">
-            <Preview editId={editId} resumeData={resumeData} IsResumeAdded={IsResumeAdded}/>
+            <Preview setResumeData={setResumeData} editId={editId} resumeData={resumeData} IsResumeAdded={IsResumeAdded}/>
 
           </div>
           <div className="col-2">
